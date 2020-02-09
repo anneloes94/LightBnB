@@ -25,18 +25,21 @@ pool.query('SELECT $1::text as message', ['Hello world!'], (err, res) => {
  */
 const getUserWithEmail = function(email) {
   return pool.query(`
-  SELECT 
-  `)
-  let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+  SELECT name
+  FROM users
+  WHERE email = $1
+  `, [email])
+  .then(res => res.rows || null)
+  // let user;
+  // for (const userId in users) {
+  //   user = users[userId];
+  //   if (user.email.toLowerCase() === email.toLowerCase()) {
+  //     break;
+  //   } else {
+  //     user = null;
+  //   }
+  // }
+  // return Promise.resolve(user);
 }
 exports.getUserWithEmail = getUserWithEmail;
 
