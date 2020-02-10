@@ -96,19 +96,6 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-// const getAllProperties = function(options, limit = 10) {
-//   return pool.query(`
-//   SELECT properties.* , avg(rating) as average_rating
-//   FROM properties
-//   JOIN property_reviews on property_reviews.property_id = properties.id
-//   WHERE city LIKE '%ancouv%'
-//   GROUP BY properties.id
-//   HAVING avg(rating) >= 4
-//   ORDER BY cost_per_night
-//   LIMIT 10;
-//   `, [limit])
-//   .then(res => res.rows);
-// }
 
 const getAllProperties = function(options, limit = 10) {
   // 1
@@ -170,7 +157,6 @@ const getAllProperties = function(options, limit = 10) {
   .then(res => res.rows);
 }
 
-
 exports.getAllProperties = getAllProperties;
 
 
@@ -180,9 +166,12 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+  const {owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street, city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms} = property
+  return pool.query(`
+  INSERT INTO users (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street, city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+  RETURNING *
+  `, [owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street, city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms])
+  .then(res => res.rows)
 }
 exports.addProperty = addProperty;
